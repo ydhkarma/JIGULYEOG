@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.fundingList">
+	<select id="checkFundingUser" parameterType="java.util.HashMap" resultType="String">
+		SELECT USER_ID
+		FROM FUNDING_LIST
+		WHERE PRO_NUM=#{pro_num} AND USER_ID =#{user_id}
+	</select>
+	
+	<insert id="insertFundingList" parameterType="FundingListDto">
+		INSERT INTO FUNDING_LIST
+		VALUES(#{pro_num},#{user_id},#{funded_money},SYSDATE)
+	</insert>
+	
+	<update id="updateFundingList" parameterType="FundingListDto">
+		UPDATE FUNDING_LIST
+		SET FUNDED_MONEY = FUNDED_MONEY + #{funded_money}
+		WHERE PRO_NUM = #{pro_num} AND USER_ID = #{user_id}
+	</update>
+	
+	<update id="updateProjectNowMoney" parameterType="FundingListDto">
+		UPDATE PROJECT_TB
+		SET PRO_NOWMONEY = PRO_NOWMONEY + #{funded_money}
+		WHERE PRO_NUM = #{pro_num}
+	</update>
+	
+	<select id="checkSuccessStatus" parameterType="int" resultType="int">
+		<![CDATA[
+		SELECT PRO_NUM
+		FROM PROJECT_TB
+		WHERE ( PRO_GOALMONEY-PRO_NOWMONEY<=0 ) AND PRO_NUM = #{pro_num}
+		]]>
+	</select>
+	
+	<update id="updateSuccessStatus" parameterType="int">
+		UPDATE PROJECT_TB
+		SET PRO_SUCCESS = 'S'
+		WHERE PRO_NUM=#{pro_num}
+	</update>
+	
+	
+</mapper>

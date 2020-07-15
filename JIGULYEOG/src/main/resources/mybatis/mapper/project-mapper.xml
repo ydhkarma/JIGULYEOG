@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.project">
+	
+	<!-- Project board CRUD -->
+	<!-- write -->
+	<insert id="writeProject" parameterType="ProjectDto">
+		INSERT INTO PROJECT_TB
+		VALUES (PRO_SEQUENCE.NEXTVAL,#{org_num},#{user_id},#{pro_title},0,#{pro_goalmoney},#{pro_start_date},#{pro_due_date},SYSDATE,#{pro_detail},'F',#{pro_image})
+	</insert>
+	
+	<!-- update -->
+	<update id="updateProject" parameterType="ProjectDto">
+		UPDATE PROJECT_TB
+		SET PRO_TITLE=#{pro_title},PRO_GOALMONEY=#{pro_goalmoney},PRO_START_DATE=#{pro_start_date},PRO_DUE_DATE=#{pro_due_date},PRO_DETAIL=#{pro_detail},PRO_IMAGE=#{pro_image}
+		WHERE PRO_NUM=#{pro_num}
+	</update>
+	
+	<!-- delete -->
+	<delete id="deleteProject" parameterType="int">
+		DELETE FROM PROJECT_TB
+		WHERE PRO_NUM=#{pro_num}
+	</delete>
+	
+	<!-- Project board Paging -->
+	
+	<!-- [1] search -->
+	
+	<!-- Paging : totalArticle -->
+	<select id="totalArticleSearch" resultType="int" parameterType="String">
+		SELECT COUNT(*)
+		FROM PROJECT_TB
+		WHERE PRO_TITLE LIKE  '%' ||  #{keyword} || '%'
+	</select>	
+	
+	<!-- Paging : getArticlelist -->
+	<select id="getArticleListSearch" resultType="ProjectDto" parameterType="java.util.HashMap">
+		SELECT P.PRO_NUM,P.USER_ID,P.PRO_TITLE,P.PRO_NOWMONEY,P.PRO_GOALMONEY,P.PRO_START_DATE,P.PRO_DUE_DATE,P.PRO_WRITE_DATE,P.PRO_DETAIL,P.PRO_SUCCESS,P.PRO_IMAGE
+		FROM (SELECT ROWNUM RN,PROJECT_TB.*
+        		FROM (SELECT * FROM PROJECT_TB WHERE PRO_TITLE LIKE  '%' ||  #{keyword} || '%' ORDER BY PRO_NUM DESC) PROJECT_TB ) P
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- [2] basic ver (category 1 ) -->
+		
+	<!-- Paging : totalArticle -->
+	<select id="totalArticle" resultType="int">
+		SELECT COUNT(*)
+		FROM PROJECT_TB
+	</select>
+	
+	<!-- Paging : getArticlelist -->
+	<select id="getArticleList" resultType="ProjectDto" parameterType="java.util.HashMap">
+		SELECT P.PRO_NUM,P.USER_ID,P.PRO_TITLE,P.PRO_NOWMONEY,P.PRO_GOALMONEY,P.PRO_START_DATE,P.PRO_DUE_DATE,P.PRO_WRITE_DATE,P.PRO_DETAIL,P.PRO_SUCCESS,P.PRO_IMAGE
+		FROM (SELECT ROWNUM RN,PROJECT_TB.*
+        		FROM (SELECT * FROM PROJECT_TB ORDER BY PRO_NUM DESC) PROJECT_TB ) P
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- [3] old ( category 2 ) -->
+	
+	<!-- Paging : getArticleOldlist -->
+	<select id="getArticleListOld" resultType="ProjectDto" parameterType="java.util.HashMap">
+		SELECT P.PRO_NUM,P.USER_ID,P.PRO_TITLE,P.PRO_NOWMONEY,P.PRO_GOALMONEY,P.PRO_START_DATE,P.PRO_DUE_DATE,P.PRO_WRITE_DATE,P.PRO_DETAIL,P.PRO_SUCCESS,P.PRO_IMAGE
+		FROM (SELECT ROWNUM RN,PROJECT_TB.*
+        		FROM (SELECT * FROM PROJECT_TB ORDER BY PRO_NUM ASC) PROJECT_TB ) P
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>	
+	
+	<!-- [4] Money (category 3) -->
+	
+	<!-- Paging : getArticleManyMoneylist -->
+	<select id="getArticleListMany" resultType="ProjectDto" parameterType="java.util.HashMap">
+		SELECT P.PRO_NUM,P.USER_ID,P.PRO_TITLE,P.PRO_NOWMONEY,P.PRO_GOALMONEY,P.PRO_START_DATE,P.PRO_DUE_DATE,P.PRO_WRITE_DATE,P.PRO_DETAIL,P.PRO_SUCCESS,P.PRO_IMAGE
+		FROM (SELECT ROWNUM RN,PROJECT_TB.*
+        		FROM (SELECT * FROM PROJECT_TB ORDER BY PRO_NOWMONEY DESC) PROJECT_TB ) P
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>	
+	
+	<!-- Detail Form -->
+	
+	<!-- query for project detail form -->
+	<select id="getProjectOne" resultType="ProjectDto" parameterType="int">
+		SELECT P.PRO_NUM,P.USER_ID,P.PRO_TITLE,P.PRO_NOWMONEY,P.PRO_GOALMONEY,P.PRO_START_DATE,P.PRO_DUE_DATE,P.PRO_WRITE_DATE,P.PRO_DETAIL,P.PRO_SUCCESS,P.PRO_IMAGE
+		FROM PROJECT_TB P
+		WHERE PRO_NUM = #{pro_num}
+	</select>
+	
+	<select id="getProjectOneOrg" resultType="OrgDto" parameterType="String">
+		SELECT *
+		FROM ORG
+		WHERE ORG_NUM IN (SELECT USER_STATUS FROM USER_TB WHERE USER_ID = #{user_id})
+	</select>
+	
+
+	
+</mapper>

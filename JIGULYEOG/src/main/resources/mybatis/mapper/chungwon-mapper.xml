@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.chungwon">
+	
+	<!-- 최신순 -->
+	<select id="selectList" resultType="ChungwonDto" parameterType="String">
+		SELECT PET_NO , PET_TITLE, PET_CONTENT ,PET_PHOTO,PET_LINK, PET_DATE,PET_DEAD, USER_ID,PET_PERSON
+		FROM CHUNGWON
+		<!-- 검색 기능 -->
+		<if test="_parameter!=null">
+		WHERE 
+			PET_TITLE LIKE '%'||#{searchWord}||'%'
+		</if>
+		ORDER BY PET_NO DESC
+		
+	</select>
+	
+	<!-- 마감순 -->
+	<select id="newestList" resultType="ChungwonDto" parameterType="String">
+		SELECT PET_NO , PET_TITLE, PET_CONTENT ,PET_PHOTO,PET_LINK, PET_DATE,PET_DEAD, USER_ID,PET_PERSON
+		FROM CHUNGWON
+		<if test="_parameter!=null">
+		WHERE 
+			PET_TITLE LIKE '%'||#{searchWord}||'%'
+		</if>
+		ORDER BY PET_NO
+	</select>
+	
+	<!-- selectOne -->
+	<select id="selectOne" parameterType="int" resultType="ChungwonDto">
+		SELECT PET_NO , PET_TITLE, PET_CONTENT ,PET_PHOTO,PET_LINK, PET_DATE,PET_DEAD, USER_ID,PET_PERSON
+		FROM CHUNGWON
+		WHERE PET_NO = #{pet_no}
+	</select>
+	
+	<!-- 게시판 insert -->
+	<insert id="insert" parameterType="ChungwonDto">
+		INSERT INTO CHUNGWON
+		VALUES(PET_SEQUENCE.NEXTVAL ,#{pet_title},#{pet_content},#{pet_photo},#{pet_link},SYSDATE,#{pet_dead},#{user_id},#{pet_person})
+	</insert>
+	
+	<!-- 게시판 delete -->
+	<delete id="delete">
+		DELETE FROM CHUNGWON
+		WHERE PET_NO = #{pet_no}
+	</delete>
+	
+	<!-- 게시판 update -->
+	<update id="update" parameterType="ChungwonDto">
+		UPDATE CHUNGWON 
+		SET PET_TITLE=#{pet_title} ,PET_CONTENT=#{pet_content},PET_PHOTO=#{pet_photo},PET_LINK=#{pet_link},PET_DEAD=#{pet_dead},PET_PERSON=#{pet_person}
+		WHERE PET_NO=#{pet_no}
+	</update>
+	
+	<!-- pasing -->
+	<select id="selectCount" resultType="int" parameterType="String">
+	
+		SELECT COUNT(PET_NO) FROM CHUNGWON
+		
+		<!-- 검색 기능 -->
+		<if test="_parameter!=null">
+		WHERE 
+			PET_TITLE LIKE '%'||#{searchWord}||'%'
+		</if>
+	</select>
+	
+
+</mapper>

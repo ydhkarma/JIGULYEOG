@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.cheerMessage">
+
+	<!-- cheerMsg CRUD -->	
+	<!-- write -->
+	<insert id="writeCheerMessage" parameterType="CheerMessageDto">
+		INSERT INTO CHEER_MESSAGE
+		VALUES (CHEER_SEQUENCE.NEXTVAL,#{pro_num},#{user_id},#{cheer_content},SYSDATE)
+	</insert>
+	
+	<!-- update -->
+	<update id="updateCheerMessage" parameterType="CheerMessageDto">
+		UPDATE CHEER_MESSAGE
+		SET CHEER_CONTENT=#{cheer_content}
+		WHERE CHEER_NUM=#{cheer_num}
+	</update>
+	
+	<!-- delete -->
+	<delete id="deleteCheerMessage" parameterType="int">
+		DELETE FROM CHEER_MESSAGE
+		WHERE CHEER_NUM=#{cheer_num}
+	</delete>
+
+
+	<!-- cheerMsg Paging -->
+	<!-- Paging : totalArticle -->
+	<select id="totalArticle" resultType="int" parameterType="int">
+		SELECT COUNT(*)
+		FROM CHEER_MESSAGE
+		WHERE PRO_NUM = #{pro_num}
+	</select>	
+	
+	<!-- Paging : getArticlelist -->
+	<select id="getArticleList" resultType="CheerMessageDto" parameterType="java.util.HashMap">
+		SELECT C.CHEER_NUM,C.PRO_NUM,C.USER_ID,C.CHEER_CONTENT, C.CHEER_DATE
+		FROM (SELECT ROWNUM RN,CHEER_MESSAGE.*
+        		FROM (SELECT * FROM CHEER_MESSAGE WHERE PRO_NUM = #{pro_num} ORDER BY CHEER_NUM DESC) CHEER_MESSAGE ) C
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="getCheerMessageOne" resultType="CheerMessageDto" parameterType="int">
+		SELECT *
+		FROM CHEER_MESSAGE
+		WHERE PRO_NUM = #{pro_num}
+		ORDER BY CHEER_NUM DESC
+	</select>
+	
+	<select id="getUserImg" parameterType="String" resultType="String">
+		SELECT USER_PIC
+		FROM USER_TB
+		WHERE USER_ID = #{user_id}
+	</select>
+
+	
+</mapper>

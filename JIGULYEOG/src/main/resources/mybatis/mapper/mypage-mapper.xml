@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.mypage">
+
+	<select id="myDonateProjectList" parameterType="String"
+		resultType="ProjectDto">
+		SELECT *
+		FROM PROJECT_TB
+		JOIN (SELECT PRO_NUM FROM FUNDING_LIST
+				WHERE USER_ID=#{user_id}) USING(PRO_NUM)
+	</select>
+
+	<select id="mySubscribeOrgList" parameterType="String"
+		resultType="OrgDto">
+		SELECT *
+		FROM ORG
+		JOIN (SELECT ORG_NUM FROM SUBSCRIBE
+				WHERE USER_ID=#{user_id}) USING(ORG_NUM)
+	</select>
+	
+	<select id="mySignUpList" parameterType="String" resultType="ChungwonDto">
+		SELECT *
+		FROM CHUNGWON
+		JOIN (SELECT PET_NO FROM SIGN_UP
+				WHERE USER_ID=#{user_id}) USING(PET_NO)
+	</select>
+	
+	<select id="myChungwonList" parameterType="String" resultType="ChungwonDto">
+		SELECT *
+		FROM CHUNGWON
+		WHERE USER_ID=#{user_id}
+	</select>
+	
+	<select id="myTogetherApllyList" parameterType="String" resultType="TogetherDto">
+		SELECT *
+		FROM TOGETHER
+		JOIN (SELECT * FROM TOGETHER_APPLY
+				WHERE USER_ID=#{user_id}) USING(TOG_NO)
+	</select>
+	
+	<select id="myTogetherList" parameterType="String" resultType="TogetherDto">
+		SELECT *
+		FROM TOGETHER
+		WHERE USER_ID=#{user_id}
+	</select>
+	
+	<select id="totalMyChungwon" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM CHUNGWON
+		WHERE USER_ID = #{user_id}
+	</select>
+	
+	<select id="getMyChungwonList" parameterType="java.util.HashMap" resultType="ChungwonDto">
+		SELECT C.*
+		FROM
+			(SELECT ROWNUM RN, CHUNGWON.*
+				FROM (SELECT * 
+						FROM CHUNGWON 
+						WHERE USER_ID=#{user_id}
+						ORDER BY PET_NO DESC) CHUNGWON) C
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="totalMyTogether" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM TOGETHER
+		WHERE USER_ID = #{user_id}
+	</select>
+	
+	<select id="getMyTogetherList" parameterType="java.util.HashMap" resultType="TogetherDto">
+		SELECT T.*
+		FROM
+			(SELECT ROWNUM RN, TOGETHER.*
+				FROM (SELECT * 
+						FROM TOGETHER 
+						WHERE USER_ID=#{user_id}
+						ORDER BY TOG_NO DESC) TOGETHER) T
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="getSignUpList" parameterType="int" resultType="SignUpDto">
+		SELECT *
+		FROM SIGN_UP
+		WHERE PET_NO = #{pet_no}
+	</select>
+	
+	<select id="getTogetherApplyList" parameterType="int" resultType="TogetherApplyDto">
+		SELECT *
+		FROM TOGETHER_APPLY
+		WHERE TOG_NO = #{tog_no}
+	</select>
+	
+	<delete id="secession" parameterType="String">
+		DELETE
+		FROM USER_TB
+		WHERE USER_ID=#{user_id}
+	</delete>
+	
+	<update id="update_member" parameterType="UserDto">
+		UPDATE USER_TB
+		<set>
+			<if test="user_pw !=null">USER_PW = #{user_pw},</if>
+			<if test="user_name !=null">USER_NAME = #{user_name},</if>
+			<if test="user_nick !=null">USER_NICK = #{user_nick},</if>
+			<if test="user_phone !=null">USER_PHONE = #{user_phone},</if>
+			<if test="user_addr !=null">USER_ADDR = #{user_addr},</if>
+			<if test="user_pic !=null">USER_PIC = #{user_pic},</if>
+			<if test="user_status !=null">USER_STATUS = #{user_status}</if>
+		</set>
+		WHERE USER_ID = #{user_id}
+	</update>
+	
+	<update id="secession_org_update" parameterType="int">
+		UPDATE ORG
+		SET
+		ORG_PIC = NULL
+		WHERE ORG_NUM=#{org_num}
+	</update>
+</mapper>

@@ -1,0 +1,70 @@
+.on{
+    color: #28a745;
+}
+
+.rootForm{
+    padding: 25px 10px 25px 10px;
+
+    border: 1px solid #cccccc;
+}
+
+.steps{
+    margin: 0px auto;
+}
+.donateForm{
+    text-align: left;
+}
+
+.donateForm h4{
+    color: #28a745;
+    font-weight: 600;
+}
+
+.donateForm input{
+    display: inline-block;
+    width: 300px;
+    margin-top: 5px;
+}
+
+.projectinfo .card{
+    margin: 0px auto;
+    width: 300px;
+}
+
+.fleft{
+    display: inline-block;
+}
+
+.con-row{
+    display: inline-block;
+}
+
+.con-row label{
+    display: inline-block;
+}
+
+.con-row input[type="radio"]{
+    box-sizing: unset;
+    width: 50px;
+}
+
+.donatechk{
+    margin-top: 10px;
+}
+
+.donatechk input[type="checkbox"]{
+    width: 50px;
+}
+
+.donatebtnform{
+    margin-top: 10px;
+}
+
+.resultMsg{
+    margin: 50px;
+}
+.resultMsg h3{
+    font-weight: 800;
+    color:#28a745;
+}
+

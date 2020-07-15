@@ -1,0 +1,36 @@
+.loginbox input{
+    border-radius: 5px;
+}
+
+.btn_success{
+	 background: #28a745;
+	 border: 2px solid #28a745;
+	 color: #fff;
+}
+
+.btn_success:hover{
+	border: 2px solid #28a745;
+    background-color: #fff;
+    color: #28a745;
+}
+
+.joinbtn{
+    color: #fff;
+    background-color: #999999;
+}
+
+.joinbtn:hover{
+    border: 2px solid #999999;
+    background-color: #fff;
+    color: #999999;
+}
+
+.sns{
+    margin: 0 auto;
+    text-align: center;
+}
+
+.sns a{
+    display: inline-block;
+    margin-bottom: 10px;
+}

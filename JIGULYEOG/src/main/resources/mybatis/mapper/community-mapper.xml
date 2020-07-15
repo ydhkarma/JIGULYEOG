@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.community">
+
+	<!-- Notice board Paging -->
+	
+	<!-- Paging : totalNotice -->
+	<select id="totalNotice" resultType="int" parameterType="int">
+		SELECT COUNT(*)
+		FROM COMMUNITY_NOTICE
+		WHERE COM_NUM=#{com_num}
+	</select>
+	
+	<!-- Paging : getNoticeList -->
+	<select id="getNoticeList" resultType="CommunityNoticeDto" parameterType="java.util.HashMap">
+		SELECT C.NOTICE_NUM, C.COM_NUM, C.NOTICE_TITLE, C.NOTICE_CONTENT,C.NOTICE_DATE, C.NOTICE_VIEW
+		FROM (SELECT ROWNUM RN, COMM_NOTICE_TB.*
+		        FROM (SELECT * FROM COMMUNITY_NOTICE WHERE COM_NUM=#{com_num} ORDER BY NOTICE_NUM DESC) COMM_NOTICE_TB ) C
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- Guestbook Paging -->
+	<select id="totalGuestbook" resultType="int" parameterType="int">
+		SELECT COUNT(*)
+		FROM COMMUNITY_GUESTBOOK
+		WHERE COM_NUM=#{com_num}
+	</select>
+	
+	<select id="getGuestbookList" resultType="CommunityGuestbookDto" parameterType="java.util.HashMap">
+		SELECT G.CATION_NUM,G.COM_NUM,G.USER_ID,G.CATION_CONTENT,G.CATION_DATE
+		FROM (SELECT ROWNUM RN, COMM_GUEST_TB.*
+		        FROM (SELECT * FROM COMMUNITY_GUESTBOOK WHERE COM_NUM=#{com_num} ORDER BY CATION_NUM DESC) COMM_GUEST_TB ) G
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+
+	<insert id="createCommunity" parameterType="int">
+		INSERT INTO COMMUNITY
+		VALUES(COM_SEQUENCE.NEXTVAL,#{pro_num})
+	</insert>
+	
+	<select id="checkCommunity" parameterType="int" resultType="int">
+		SELECT COM_NUM
+		FROM COMMUNITY
+		WHERE PRO_NUM=#{pro_num}
+	</select>
+	
+	<select id="fundingList" parameterType="int" resultType="FundingListDto">
+		SELECT *
+		FROM FUNDING_LIST
+		WHERE PRO_NUM = #{pro_num}
+	</select>
+	
+	<select id="fundingUser" parameterType="int" resultType="UserDto">
+	<![CDATA[
+		SELECT U.*
+		FROM USER_TB U
+		WHERE U.USER_ID IN (SELECT FUND.USER_ID
+							FROM (SELECT ROWNUM , FUNDING_LIST.USER_ID
+        							FROM FUNDING_LIST
+        							WHERE ROWNUM <7 AND PRO_NUM=#{pro_num}
+        							ORDER BY FUNDED_DATE DESC) FUND)
+      ]]>
+	</select>
+	
+	<!-- Notice board CRUD -->
+	
+	<insert id="noticeWrite" parameterType="CommunityNoticeDto">
+		INSERT INTO COMMUNITY_NOTICE
+		VALUES(NOTICE_SEQUENCE.NEXTVAL,#{com_num},#{notice_title},#{notice_content},SYSDATE,0)
+	</insert>
+	
+	<select id="getNoticeOne" parameterType="int" resultType="CommunityNoticeDto">
+		SELECT *
+		FROM COMMUNITY_NOTICE
+		WHERE NOTICE_NUM=#{notice_num}
+	</select>
+	
+	<update id="noticeUpdate" parameterType="CommunityNoticeDto">
+		UPDATE COMMUNITY_NOTICE
+		SET NOTICE_TITLE=#{notice_title} , NOTICE_CONTENT=#{notice_content}
+		WHERE NOTICE_NUM=#{notice_num}
+	</update>
+	
+	<delete id="noticeDelete" parameterType="int">
+		DELETE FROM COMMUNITY_NOTICE
+		WHERE NOTICE_NUM=#{notice_num}	
+	</delete>
+	
+	<update id="countViewNotice" parameterType="int">
+		UPDATE COMMUNITY_NOTICE
+		SET NOTICE_VIEW = NOTICE_VIEW + 1
+		WHERE NOTICE_NUM=#{notice_num}
+	</update>
+	
+	<!-- Guestbook CRUD -->
+	
+	<insert id="guestbookWrite" parameterType="CommunityGuestbookDto">
+		INSERT INTO COMMUNITY_GUESTBOOK
+		VALUES(CATION_SEQUENCE.NEXTVAL,#{com_num},#{user_id},#{cation_content},SYSDATE)
+	</insert>
+	
+	<update id="guestbookUpdate" parameterType="CommunityGuestbookDto">
+		UPDATE COMMUNITY_GUESTBOOK
+		SET CATION_CONTENT = #{cation_content}
+		WHERE CATION_NUM = #{cation_num}
+	</update>
+	
+	<delete id="guestbookDelete" parameterType="int">
+		DELETE FROM COMMUNITY_GUESTBOOK
+		WHERE CATION_NUM=#{cation_num}	
+	</delete>
+	
+</mapper>

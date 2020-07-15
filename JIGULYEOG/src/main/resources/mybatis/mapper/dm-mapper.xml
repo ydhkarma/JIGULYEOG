@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.dm">
+
+	<select id="dmList" parameterType="String" resultType="DMListDto">
+		SELECT *
+		FROM DM_LIST
+		WHERE USER_ID = #{user_id}
+	</select>
+	
+	<select id="checkDMList" parameterType="java.util.HashMap" resultType="DMListDto">
+		SELECT *
+		FROM DM_LIST
+		WHERE USER_ID = #{user_id} AND DM_ID = #{dm_id}
+	</select>
+	
+	<select id="checkUnreadDM" parameterType="String" resultType="DMListDto">
+	SELECT DISTINCT DM_HOST AS USER_ID, SEND_ID AS DM_ID,DM_KEY
+	FROM DM_CHAT
+	WHERE DM_HOST = #{user_id} AND RECEIVE_ID= #{user_id}
+	</select>
+	
+	<insert id="addDM" parameterType="java.util.HashMap">
+		INSERT INTO DM_LIST
+		VALUES(#{user_id},#{dm_id},#{dm_key})
+	</insert>
+	
+	<select id="getDmChatLog" parameterType="DMListDto" resultType="DMChatDto">
+		SELECT *
+		FROM DM_CHAT
+		WHERE DM_KEY = #{dm_key} AND DM_HOST = #{user_id}
+		ORDER BY DM_NO
+	</select>
+	
+	<delete id="deleteDMList" parameterType="java.util.HashMap">
+		DELETE FROM DM_LIST
+		WHERE USER_ID = #{user_id} AND DM_ID = #{dm_id}
+	</delete>
+	
+	<delete id="deleteDMChat" parameterType="java.util.HashMap">
+		DELETE FROM DM_CHAT
+		WHERE DM_HOST = #{user_id} AND DM_KEY = #{dm_key}
+	</delete>
+	
+	<insert id="insertDMChat" parameterType="DMChatDto">
+		INSERT INTO DM_CHAT
+		VALUES(DM_SEQUENCE.NEXTVAL,#{dm_key},#{dm_host},#{send_id},#{receive_id},#{dm_content},SYSDATE)
+	</insert>
+	
+</mapper>

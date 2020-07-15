@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="mapper.Together">
+  
+  	<resultMap type="TogetherDto" id="TogetherMap">
+  		<result property="tog_no" column="TOG_NO"/> 
+  		<result property="tog_title" column="TOG_TITLE"/>
+  		<result property="tog_category" column="TOG_CATEGORY"/>
+  		<result property="tog_content" column="TOG_CONTENT"/>
+  		<result property="tog_image" column="TOG_IMAGE"/>
+  		<result property="tog_dead" column="TOG_DEAD"/>
+  		<result property="tog_ps" column="TOG_PS"/>
+  		<result property="user_id" column="USER_ID"/>
+  	</resultMap>
+  	
+  	<!-- 삭제예정 -->
+  	<select id="selectList" resultMap="TogetherMap">
+  		SELECT TOG_NO, TOG_TITLE, TOG_CONTENT, TOG_CATEGORY,  TOG_DEAD, TOG_PS,USER_ID
+  		FROM TOGETHER
+  		ORDER BY TOG_NO ASC
+  	</select>	
+  	
+  	<select id="selectOne" parameterType="int" resultType="TogetherDto">
+  		SELECT TOG_NO, TOG_TITLE, TOG_CONTENT, TOG_CATEGORY , TOG_IMAGE,TOG_DEAD, TOG_PS, USER_ID
+  		FROM TOGETHER
+  		WHERE TOG_NO=#{tog_no}
+  	</select>
+  	
+  	 
+  	<insert id="insert" parameterType="TogetherDto">
+  		INSERT INTO TOGETHER
+  		VALUES(TOG_SEQUENCE.NEXTVAL ,#{tog_title},#{tog_content},#{tog_category},#{tog_image},#{tog_dead},#{tog_ps},#{user_id})
+  	</insert>
+  	
+	<update id="update" parameterType="TogetherDto">
+		UPDATE TOGETHER
+		SET TOG_TITLE=#{tog_title}, TOG_CONTENT=#{tog_content}, TOG_CATEGORY=#{tog_category},TOG_IMAGE=#{tog_image},TOG_DEAD=#{tog_dead}, TOG_PS=#{tog_ps}
+		WHERE TOG_NO=#{tog_no}
+	</update>
+ 
+	<delete id="delete" parameterType="int">
+		DELETE FROM TOGETHER
+		WHERE TOG_NO=#{tog_no}
+	</delete> 
+	
+	<!-- paging -->
+	<select id="totalArticle" resultType="int">
+		SELECT COUNT(*)
+		FROM TOGETHER
+	</select>
+	
+	<!-- Paging : getArticlelist -->
+	<select id="getArticleList" resultType="TogetherDto" parameterType="java.util.HashMap">
+		 SELECT T.*
+      FROM
+         (SELECT ROWNUM RN, TOGETHER.*
+            FROM (SELECT * 
+                  FROM TOGETHER 
+                  ORDER BY TOG_NO DESC) TOGETHER) T
+      WHERE RN BETWEEN #{startRow} AND #{endRow}  
+	</select>
+	
+	<!-- Searching Paging -->
+	<select id="totalArticleSearch" resultType="int" >
+		SELECT COUNT(*)
+		FROM TOGETHER WHERE TOG_TITLE LIKE '%' || #{keyword} || '%'
+	</select>
+	
+	<!-- Paging : getArticlelist -->
+	<select id="getArticleListSearch" resultType="TogetherDto" parameterType="java.util.HashMap">
+		SELECT T2.TOG_NO, T2.TOG_TITLE, T2.TOG_CONTENT, T2.TOG_CATEGORY, T2.TOG_IMAGE ,T2.TOG_DEAD, T2.TOG_PS,T2.USER_ID 
+		FROM (SELECT ROWNUM RN,T.* FROM (SELECT * FROM TOGETHER WHERE TOG_TITLE LIKE  '%' ||  #{keyword} || '%' ORDER BY TOG_NO ASC) T ) T2 
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	
+	
+	<!-- category  -->
+	
+	<select id="totalFundingArticle" resultType="int">
+		SELECT COUNT(*)
+		FROM TOGETHER
+		WHERE TOG_CATEGORY='모금'
+	</select>
+	
+	<select id="totalShareArticle" resultType="int">
+		SELECT COUNT(*)
+		FROM TOGETHER
+		WHERE TOG_CATEGORY='나눔'
+	</select>
+	
+	<select id="totalVolunteerArticle" resultType="int">
+		SELECT COUNT(*)
+		FROM TOGETHER
+		WHERE TOG_CATEGORY='봉사'
+	</select>
+	
+	<select id="selectFundingList" resultType="TogetherDto" parameterType="java.util.HashMap">
+		SELECT T2.TOG_NO, T2.TOG_TITLE, T2.TOG_CONTENT, T2.TOG_CATEGORY, T2.TOG_IMAGE , T2.TOG_DEAD, T2.TOG_PS,T2.USER_ID 
+		FROM (SELECT ROWNUM RN,T.* FROM (SELECT * FROM TOGETHER WHERE TOG_CATEGORY='모금' ORDER BY TOG_NO ASC) T ) T2 
+		WHERE RN BETWEEN #{startRow} AND #{endRow}   
+	</select>
+	
+	<select id="selectVolunteerList" resultType="TogetherDto" parameterType="java.util.HashMap">
+		SELECT T2.TOG_NO, T2.TOG_TITLE, T2.TOG_CONTENT, T2.TOG_CATEGORY, T2.TOG_IMAGE , T2.TOG_DEAD, T2.TOG_PS,T2.USER_ID 
+		FROM (SELECT ROWNUM RN,T.* FROM (SELECT * FROM TOGETHER WHERE TOG_CATEGORY='봉사' ORDER BY TOG_NO ASC) T ) T2 
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	
+	
+	<select id="selectShareList" resultType="TogetherDto" parameterType="java.util.HashMap">
+		SELECT T2.TOG_NO, T2.TOG_TITLE, T2.TOG_CONTENT, T2.TOG_CATEGORY, T2.TOG_IMAGE , T2.TOG_DEAD, T2.TOG_PS,T2.USER_ID 
+		FROM (SELECT ROWNUM RN,T.* FROM (SELECT * FROM TOGETHER WHERE TOG_CATEGORY='나눔' ORDER BY TOG_NO ASC) T ) T2 
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="selectWriteUser" resultType="UserDto" parameterType="String">
+		SELECT *
+		FROM USER_TB
+		WHERE USER_ID=#{user_id}	
+	
+	</select>
+	
+	
+  </mapper>

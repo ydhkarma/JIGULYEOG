@@ -1,0 +1,51 @@
+/**********join_select.html****************/
+.join_select{
+    cursor: pointer;
+}
+
+/******************************************/
+
+/**********join_user.html, join_org.html**********/
+.joinbox input{
+    border-radius: 5px;
+}
+
+.join_input{
+    display: inline-block;
+    width: 440px;
+}
+
+.cancelbtn{
+    color: #fff;
+    background-color: #999999;
+}
+
+.cancelbtn:hover{
+    border: 2px solid #999999;
+    background-color: #fff;
+    color: #999999;
+}
+
+.clearFix::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.btn_success{
+	 background: #28a745;
+	 border: 2px solid #28a745;
+	 color: #fff;
+}
+
+.btn_success:hover{
+	border: 2px solid #28a745;
+    background-color: #fff;
+    color: #28a745;
+}
+
+.check_text{
+	text-align: left;
+	margin-left: 10px;
+}
+/******************************************/

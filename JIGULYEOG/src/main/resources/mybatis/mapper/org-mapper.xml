@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.org">
+	<resultMap type="SubscribeDto" id="Subscribe_map">
+		<result column="ORG_NUM" property="org_num"></result>
+	</resultMap>
+
+	<resultMap type="UserDto" id="UserDto_Map">
+		<result column="USER_ID" property="user_id"></result>
+		<result column="USER_PIC" property="user_pic"></result>
+		<collection property="subscribe" resultMap="Subscribe_map"></collection>
+	</resultMap>
+
+
+
+
+
+	<select id="getOrgList" parameterType="java.util.HashMap" resultType="OrgDto">
+		SELECT O.*
+		FROM
+			(SELECT ROWNUM RN, ORG.*
+				FROM (SELECT * 
+						FROM ORG 
+						ORDER BY ORG_NUM) ORG) O
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="getTotalOrg" resultType="int">
+		SELECT COUNT(*)
+		FROM ORG
+	</select>
+	
+	<select id="totalOrgSearch" resultType="int" parameterType="String">
+		SELECT COUNT(*)
+		FROM ORG
+		WHERE ORG_NAME LIKE '%'||#{keyword}||'%' OR ORG_ADDR LIKE '%'||#{keyword}||'%' 
+	</select>
+	
+	<select id="getOrgListSearch" resultType="OrgDto" parameterType="java.util.HashMap">
+		SELECT O.*
+		FROM
+			(SELECT ROWNUM RN, ORG.*
+				FROM (SELECT * 
+						FROM ORG 
+						WHERE ORG_NAME LIKE '%'||#{keyword}||'%' OR ORG_ADDR LIKE '%'||#{keyword}||'%'
+						ORDER BY ORG_NUM) ORG) O
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="orgSelectOne" resultType="OrgDto" parameterType="Integer">
+		SELECT *
+		FROM ORG
+		WHERE ORG_NUM=#{org_num}
+	</select>
+	
+	<select id="getPList" resultType="ProjectDto" parameterType="Integer">
+		SELECT *
+		FROM PROJECT_TB
+		WHERE ORG_NUM=#{org_num}
+	</select>
+	
+	<select id="getNowPList" resultType="ProjectDto" parameterType="int">
+		SELECT *
+		FROM PROJECT_TB
+		WHERE ORG_NUM=#{org_num} AND PRO_DUE_DATE <![CDATA[>]]> SYSDATE
+	</select>
+	
+	<select id="getEndPList" resultType="ProjectDto" parameterType="int">
+		SELECT *
+		FROM PROJECT_TB
+		WHERE ORG_NUM=#{org_num} AND PRO_DUE_DATE <![CDATA[<]]> SYSDATE
+	</select>
+	
+	<insert id="subscribe" parameterType="java.util.HashMap">
+		INSERT INTO SUBSCRIBE VALUES
+		(#{org_num},#{user_id})
+	</insert>
+	
+	<delete id="subscribeCancle" parameterType="java.util.HashMap">
+		DELETE
+		FROM SUBSCRIBE
+		WHERE
+		ORG_NUM = #{org_num} AND USER_ID = #{user_id}
+	</delete>
+	
+	<select id="subChk"  parameterType="java.util.HashMap" resultType="int">
+		SELECT COUNT(*)
+		FROM (SELECT * FROM SUBSCRIBE
+				WHERE ORG_NUM=#{org_num} AND USER_ID=#{user_id})
+	</select>
+	
+	<select id="getSubList" parameterType="int" resultMap="UserDto_Map">
+		SELECT A.USER_ID, A.USER_PIC, B.ORG_NUM FROM USER_TB A
+		JOIN (SELECT * FROM SUBSCRIBE WHERE ORG_NUM=#{org_num}) B ON (A.USER_ID = B.USER_ID)
+	</select>
+	
+</mapper>

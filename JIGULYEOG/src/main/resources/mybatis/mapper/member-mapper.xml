@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.mymember">
+	<select id="login" parameterType="UserDto" resultType="UserDto">
+		SELECT USER_ID, USER_PW, USER_NAME, USER_NICK, USER_PHONE, USER_ADDR, USER_PIC, USER_STATUS
+		FROM USER_TB
+		WHERE USER_ID=#{user_id}
+		AND USER_PW=#{user_pw}
+	</select>
+	
+	<select id="snslogin" parameterType="String" resultType="UserDto">
+		SELECT USER_ID, USER_PW, USER_NAME, USER_NICK, USER_PHONE, USER_ADDR, USER_PIC, USER_STATUS
+		FROM USER_TB
+		WHERE USER_ID=#{user_id}
+	</select>
+	
+	<insert id="regist_user" parameterType="UserDto">
+  		INSERT INTO USER_TB VALUES(#{user_id}, #{user_pw}, #{user_name}, #{user_nick}, #{user_phone}, #{user_addr}, #{user_pic}, 0)
+  	</insert>
+  	
+  	<insert id="regist_org" parameterType="UserDto">
+  		INSERT INTO USER_TB VALUES(#{user_id}, #{user_pw}, #{user_name}, #{user_nick}, #{user_phone}, #{user_addr}, #{user_pic}, #{user_status})
+  	</insert>
+  	
+  	<insert id="insertSNS" parameterType="UserDto">
+  		INSERT INTO USER_TB VALUES(#{user_id}, #{user_pw}, #{user_id}, #{user_id}, ' ', ' ', 'ficon.png', 0)
+  	</insert>
+  	
+  	<select id="searchId" resultType="UserDto">
+  		SELECT USER_ID, USER_PW, USER_NAME, USER_NICK, USER_PHONE, USER_ADDR, USER_PIC, USER_STATUS
+  		FROM USER_TB
+  		WHERE USER_PHONE=#{user_phone}
+  	</select>
+  	
+  	<select id="searchPw" resultType="UserDto">
+  		SELECT USER_ID, USER_PW, USER_NAME, USER_NICK, USER_PHONE, USER_ADDR, USER_PIC, USER_STATUS
+  		FROM USER_TB
+  		WHERE USER_ID=#{user_id}
+  		AND USER_PHONE=#{user_phone}
+  	</select>
+  	
+  	<select id="idCheck" resultType="int" parameterType="String">
+  		SELECT count(*)
+  		FROM USER_TB
+  		WHERE USER_ID=#{user_id}
+  	</select>
+  	
+  	<select id="nickCheck" resultType="int" parameterType="String">
+  		SELECT count(*)
+  		FROM USER_TB
+  		WHERE USER_NICK=#{user_nick}
+  	</select>
+
+  	<select id="phoneCheck" resultType="int" parameterType="String">
+  		SELECT count(*)
+  		FROM USER_TB
+  		WHERE USER_PHONE=#{user_phone}
+  	</select>
+  	
+  	  	
+  	<!-- ## 솔지 수정 부분 : 환경단체 가입 시, 해당 이미지 org테이블에 org_pic에 추가 ## -->
+  	<update id="regist_org_img_update" parameterType="java.util.HashMap">
+  		UPDATE ORG
+  		SET ORG_PIC = #{user_pic}
+  		WHERE ORG_NUM = #{user_status}
+  	</update>
+  	<!-- ############################################################# -->
+</mapper>

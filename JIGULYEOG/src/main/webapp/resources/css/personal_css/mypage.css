@@ -1,0 +1,38 @@
+/**********join_select.html****************/
+.join_select{
+    cursor: pointer;
+}
+
+/******************************************/
+
+/**********user_updateform.html user_secessionform.html**********/
+.mypagebox input{
+    border-radius: 5px;
+}
+
+.mypage_input{
+    display: inline-block;
+    width: 440px;
+}
+
+.cancelbtn{
+    color: #fff;
+    background-color: #999999;
+}
+
+.cancelbtn:hover{
+    border: 2px solid #999999;
+    background-color: #fff;
+    color: #999999;
+}
+
+.clearFix::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+/******************************************/
+
+
+
+
